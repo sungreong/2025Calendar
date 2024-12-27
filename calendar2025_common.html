@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>I'm Growing Everyday 2025</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Sunflower:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            size: A2 landscape;
+            margin: 0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .calendar-container {
+            width: 594mm;
+            height: 420mm;
+            background-color: white;
+            padding: 5mm 3mm;
+            position: relative;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .title {
+            font-family: 'Sunflower', sans-serif;
+            text-align: center;
+            font-size: 12px;
+            margin-bottom: 6mm;
+            color: #1a237e;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 8px 0;
+            position: relative;
+        }
+
+        .title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100mm;
+            height: 0.5mm;
+            background: linear-gradient(90deg, transparent, #1a237e, transparent);
+        }
+
+        .growth-grid {
+            display: grid;
+            grid-template-rows: repeat(12, 1fr);
+            gap: 1mm;
+            height: calc(100% - 18mm);
+        }
+
+        .month-row {
+            display: grid;
+            grid-template-columns: 10mm 1fr;
+            gap: 0.8mm;
+            border: 0.2mm solid #e0e0e0;
+            padding: 0.5mm;
+            background-color: #fafafa;
+            min-height: 0;
+        }
+
+        .month-number {
+            font-family: 'Sunflower', sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            color: #34495e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(31, 1fr);
+            gap: 0.2mm;
+        }
+
+        .day-cell {
+            aspect-ratio: 1/1.8;
+            border: 0.2mm solid #e0e0e0;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .day-number {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 7px;
+            font-weight: bold;
+            color: #333;
+            padding: 0.4mm 0.6mm;
+            border-bottom: 0.2mm solid #eee;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+        }
+
+        .day-number::after {
+            content: attr(data-event);
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 5px;
+            font-weight: normal;
+            margin-left: 0.5mm;
+            color: inherit;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .task-cell {
+            flex: 1;
+            border: 0.1mm dotted #eee;
+            margin: 0.1mm;
+        }
+
+        .weekend .day-number {
+            background-color: #ffe8e8;
+            color: #e74c3c;
+        }
+
+        .holiday {
+            background-color: #ffefef;
+        }
+
+        .holiday .day-number {
+            background-color: #ffdbdb;
+            color: #e74c3c;
+        }
+
+        .holiday-name, .custom-event-name {
+            display: block;
+            font-size: 5px;
+            color: inherit;
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 250px;
+        }
+
+        .controls h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+
+        .controls select, .controls input {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+
+        .controls button {
+            width: 100%;
+            padding: 8px;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+
+        .controls button:first-of-type {
+            background-color: #2e7d32;
+        }
+
+        .controls button:last-of-type {
+            background-color: #1976d2;
+        }
+
+        .controls button:hover {
+            opacity: 0.9;
+        }
+
+        @media print {
+            @page {
+                size: 594mm 420mm;
+                margin: 0;
+            }
+
+            html, body {
+                width: 594mm;
+                height: 420mm;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                background-color: white;
+            }
+
+            .calendar-container {
+                width: 594mm;
+                height: 420mm;
+                margin: 0;
+                padding: 5mm 3mm;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                box-shadow: none;
+                transform: none;
+            }
+
+            .controls {
+                display: none !important;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+
+        @media screen {
+            body {
+                padding: 20px;
+            }
+            
+            .calendar-container {
+                transform: scale(0.65);
+                transform-origin: top center;
+                margin: -60px auto 0;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+        }
+
+        .custom-event {
+            background-color: #e8f5e9;
+        }
+
+        .custom-event .day-number {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .custom-event .day-number::after {
+            color: #2e7d32;
+        }
+
+        .holiday {
+            background-color: #ffefef;
+        }
+
+        .holiday .day-number {
+            background-color: #ffdbdb;
+            color: #e74c3c;
+        }
+
+        .holiday .day-number::after {
+            color: #e74c3c;
+        }
+
+        .weekend .day-number {
+            background-color: #ffe8e8;
+            color: #e74c3c;
+        }
+
+        .weekend .day-number::after {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="calendar-container">
+        <h1 class="title">2025년 캘린더</h1>
+        <div class="growth-grid" id="growthGrid"></div>
+    </div>
+
+    <div class="controls">
+        <h3>이벤트 추가</h3>
+        <select id="eventMonth">
+            <option value="">월 선택</option>
+            <option value="1">1월</option>
+            <option value="2">2월</option>
+            <option value="3">3월</option>
+            <option value="4">4월</option>
+            <option value="5">5월</option>
+            <option value="6">6월</option>
+            <option value="7">7월</option>
+            <option value="8">8월</option>
+            <option value="9">9월</option>
+            <option value="10">10월</option>
+            <option value="11">11월</option>
+            <option value="12">12월</option>
+        </select>
+        <select id="eventDay">
+            <option value="">일 선택</option>
+        </select>
+        <input type="text" id="eventName" placeholder="이벤트 이름">
+        <button onclick="addCustomEvent()" style="margin-bottom: 15px;">추가하기</button>
+        
+        <h3>PDF 저장</h3>
+        <button onclick="printToPDF()" style="background-color: #1976d2;">PDF로 저장하기</button>
+    </div>
+
+    <script>
+        const holidays2025 = {
+            '1-1': '신정',
+            '1-28': '날연휴',
+            '1-29': '설날',
+            '1-30': '설날연휴',
+            '3-1': '3.1절',
+            '3-3': '대체공휴일',
+            '5-5': '어린이날',
+            '5-5': '부처님오신날',
+            '5-6': '대체공휴일',
+            '6-6': '현충일',
+            '8-15': '광복절',
+            '10-3': '개천절',
+            '10-5': '추석연휴',
+            '10-6': '추석',
+            '10-7': '추석연휴',
+            '10-8': '대체공휴일',
+            '10-9': '한글날',
+            '12-25': '크리스마스'
+        };
+
+        const customEvents2025 = {
+            '2-14': '발렌타인데이',
+            '3-14': '화이트데이',
+            '5-8': '어버이날',
+            '5-15': '스승의날',
+            '7-17': '제헌절',
+            '9-28': '추석',
+            '12-31': '송년',
+        };
+
+        function createGrowthTracker() {
+            const growthGrid = document.getElementById('growthGrid');
+            
+            for (let month = 1; month <= 12; month++) {
+                const monthRow = document.createElement('div');
+                monthRow.className = 'month-row';
+                
+                const monthNumber = document.createElement('div');
+                monthNumber.className = 'month-number';
+                monthNumber.textContent = month;
+                monthRow.appendChild(monthNumber);
+                
+                const daysGrid = document.createElement('div');
+                daysGrid.className = 'days-grid';
+                
+                const daysInMonth = new Date(2025, month, 0).getDate();
+                
+                for (let day = 1; day <= 31; day++) {
+                    const dayCell = document.createElement('div');
+                    dayCell.className = 'day-cell';
+                    
+                    if (day <= daysInMonth) {
+                        const dayNumber = document.createElement('div');
+                        dayNumber.className = 'day-number';
+                        dayNumber.textContent = day;
+                        
+                        const date = new Date(2025, month - 1, day);
+                        const holidayKey = `${month}-${day}`;
+                        const customEventKey = `${month}-${day}`;
+                        
+                        if (holidays2025[holidayKey]) {
+                            dayCell.classList.add('holiday');
+                            dayNumber.setAttribute('data-event', holidays2025[holidayKey]);
+                        } else if (customEvents2025[customEventKey]) {
+                            dayCell.classList.add('custom-event');
+                            dayNumber.setAttribute('data-event', customEvents2025[customEventKey]);
+                        } else if (date.getDay() === 0) {
+                            dayCell.classList.add('weekend', 'sunday');
+                        } else if (date.getDay() === 6) {
+                            dayCell.classList.add('weekend');
+                        }
+                        
+                        const taskCell = document.createElement('div');
+                        taskCell.className = 'task-cell';
+                        
+                        dayCell.appendChild(dayNumber);
+                        dayCell.appendChild(taskCell);
+                    }
+                    
+                    daysGrid.appendChild(dayCell);
+                }
+                
+                monthRow.appendChild(daysGrid);
+                growthGrid.appendChild(monthRow);
+            }
+        }
+
+        function updateDays() {
+            const month = document.getElementById('eventMonth').value;
+            const daySelect = document.getElementById('eventDay');
+            daySelect.innerHTML = '<option value="">일 선택</option>';
+            
+            if (month) {
+                const daysInMonth = new Date(2025, month, 0).getDate();
+                for (let i = 1; i <= daysInMonth; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i;
+                    daySelect.appendChild(option);
+                }
+            }
+        }
+
+        function addCustomEvent() {
+            const month = document.getElementById('eventMonth').value;
+            const day = document.getElementById('eventDay').value;
+            const name = document.getElementById('eventName').value;
+            
+            if (!month || !day || !name) {
+                alert('모든 항목을 입력해주세요.');
+                return;
+            }
+            
+            const key = `${month}-${day}`;
+            customEvents2025[key] = name;
+            
+            // 캘린더 다시 그리기
+            const growthGrid = document.getElementById('growthGrid');
+            growthGrid.innerHTML = '';
+            createGrowthTracker();
+            
+            // 입력 폼 초기화
+            document.getElementById('eventMonth').value = '';
+            document.getElementById('eventDay').value = '';
+            document.getElementById('eventName').value = '';
+            
+            alert('이벤트가 추가되었습니다.');
+        }
+
+        document.getElementById('eventMonth').addEventListener('change', updateDays);
+
+        createGrowthTracker();
+
+        function printToPDF() {
+            const printMsg = document.createElement('div');
+            printMsg.style.position = 'fixed';
+            printMsg.style.top = '50%';
+            printMsg.style.left = '50%';
+            printMsg.style.transform = 'translate(-50%, -50%)';
+            printMsg.style.background = 'white';
+            printMsg.style.padding = '20px';
+            printMsg.style.borderRadius = '5px';
+            printMsg.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+            printMsg.style.zIndex = '9999';
+            printMsg.innerHTML = `
+                <h3 style="margin-bottom: 10px;">PDF 저장 설정 안내</h3>
+                <p>1. 다음 화면에서 대상을 "PDF로 저장" 선택</p>
+                <p>2. 다음 설정을 확인해세요:</p>
+                <ul style="margin-left: 20px; margin-top: 5px;">
+                    <li>용지 크기: A2</li>
+                    <li>방향: 가로</li>
+                    <li>여백: 없음</li>
+                    <li>배경 그래픽: 포함</li>
+                    <li>크기: 실제 크기(100%)</li>
+                </ul>
+                <button onclick="this.parentElement.remove();window.print();" 
+                        style="margin-top: 15px; padding: 8px 15px; background: #1976d2; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                    확인하고 진행하기
+                </button>
+            `;
+            document.body.appendChild(printMsg);
+        }
+
+        // 인쇄 스타일을 수정
+        const printStyles = document.createElement('style');
+        printStyles.textContent = `
+            @media print {
+                @page {
+                    size: A2 landscape;
+                    margin: 0;
+                }
+                body {
+                    width: 594mm;
+                    height: 420mm;
+                    print-color-adjust: exact;
+                    -webkit-print-color-adjust: exact;
+                }
+                .calendar-container {
+                    transform: none;
+                    width: 594mm;
+                    height: 420mm;
+                    padding: 5mm;
+                }
+                .controls, .print-message {
+                    display: none !important;
+                }
+            }
+        `;
+        document.head.appendChild(printStyles);
+
+        // 화면에서 보기 좋게 스타일 수정
+        const viewportStyles = document.createElement('style');
+        viewportStyles.textContent = `
+            @media screen {
+                body {
+                    padding: 10px;
+                }
+                .calendar-container {
+                    transform: scale(0.8);
+                    transform-origin: top center;
+                    margin: 0 auto;
+                }
+            }
+        `;
+        document.head.appendChild(viewportStyles);
+    </script>
+</body>
+</html> 
